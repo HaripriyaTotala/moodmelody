@@ -4,12 +4,10 @@ import UserInput from './components/UserInput';
 import MotivationalResponse from './components/MotivationalResponse';
 import MusicRecommendations from './components/MusicRecommendations';
 import ActivitySuggestions from './components/ActivitySuggestions';
-import ArticleRecommendations from './components/ArticleRecommendations';
 import Footer from './components/Footer';
 import { generateMotivationalResponse } from './services/openaiService';
 import { getMusicRecommendations } from './services/spotifyService';
 import { getActivitySuggestions } from './services/youtubeService';
-import { getArticleRecommendations } from './services/newsService';
 
 function App() {
   const [userName, setUserName] = useState('');
@@ -19,7 +17,6 @@ function App() {
   const [motivationalMessage, setMotivationalMessage] = useState('');
   const [musicRecommendations, setMusicRecommendations] = useState([]);
   const [activitySuggestions, setActivitySuggestions] = useState([]);
-  const [articleRecommendations, setArticleRecommendations] = useState([]);
   
   const handleUserSubmit = async (name, mood) => {
     setUserName(name);
@@ -33,15 +30,13 @@ function App() {
       setMotivationalMessage(response);
       
       // Get recommendations in parallel
-      const [musicData, activitiesData, articlesData] = await Promise.all([
+      const [musicData, activitiesData] = await Promise.all([
         getMusicRecommendations(mood),
-        getActivitySuggestions(mood),
-        getArticleRecommendations(mood)
+        getActivitySuggestions(mood)
       ]);
       
       setMusicRecommendations(musicData);
       setActivitySuggestions(activitiesData);
-      setArticleRecommendations(articlesData);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -56,7 +51,6 @@ function App() {
     setMotivationalMessage('');
     setMusicRecommendations([]);
     setActivitySuggestions([]);
-    setArticleRecommendations([]);
   };
   
   return (
@@ -113,11 +107,6 @@ function App() {
                 
                 <ActivitySuggestions 
                   suggestions={activitySuggestions} 
-                  isLoading={isLoading} 
-                />
-                
-                <ArticleRecommendations 
-                  recommendations={articleRecommendations} 
                   isLoading={isLoading} 
                 />
                 
